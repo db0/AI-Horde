@@ -276,6 +276,7 @@ class Aesthetics(Resource):
         If you select best-of image, you will gain 4 kudos. Each rating is 5 kudos. Best-of will be ignored when ratings conflict with it.
         You can never gain more kudos than you spent for this generation. Your reward at max will be your kudos consumption - 1.
         '''
+        self.args = self.post_parser.parse_args()
         wp = database.get_wp_by_id(id)
         if not wp:
             raise e.RequestNotFound(id)
@@ -283,7 +284,6 @@ class Aesthetics(Resource):
             raise e.InvalidAestheticAttempt("You can only aesthetically rate completed requests!")
         if not wp.shared:
             raise e.InvalidAestheticAttempt("You can only aesthetically rate requests you have opted to share publicly")
-        self.args = self.post_parser.parse_args()
         procgen_ids = [str(procgen.id) for procgen in wp.processing_gens if not procgen.faulted and not procgen.cancelled]
         logger.debug(procgen_ids)
         if self.args.ratings:
